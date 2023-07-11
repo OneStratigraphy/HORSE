@@ -16,7 +16,7 @@ Parallel Horizon Gene
 - (7)调试—命令参数—-n N $(TargetPath)；其中N为设定的线程数
 ## 二、配置C++ boost库
 1. https://www.boost.org/users/download/
-2. 解压后添加环境变量：此电脑-属性-高级系统设置-环境变量-新建；变量名：BOOST_ROOT；变量值为安装路径
+2. 解压并打开文件夹
 3. 运行bootstrap.bat
 4. powershell/cmd进入对应路径，运行.\b2.exe --address-model=64 --with-mpi runtime-link=static
 5. VC++目录—包含目录—$(Boost安装位置)
