@@ -18,6 +18,7 @@ Parallel Horizon Gene
 1. https://www.boost.org/users/download/
 2. 解压并打开文件夹
 3. 运行bootstrap.bat
-4. powershell/cmd进入对应路径，运行.\b2.exe --address-model=64 --with-mpi runtime-link=static
-5. VC++目录—包含目录—$(Boost安装位置)
-6. VC++目录→库目录—$(Boost安装位置)\stage\lib
+4. 打开project-config.jam，添加：using mpi ;
+5. powershell/cmd进入对应路径，运行.\b2.exe --address-model=64 --with-mpi runtime-link=static
+6. VC++目录—包含目录—$(Boost安装位置)
+7. VC++目录→库目录—$(Boost安装位置)\stage\lib
