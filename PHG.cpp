@@ -35,19 +35,6 @@ struct Chromosome {
     int global_operator_count;
 };
 
-struct PenaltyParameters {
-    int n_biostrat;
-    std::vector<int> biostrat_columns;
-    int n_pmag;
-    int pmag;
-    int n_dates;
-    std::vector<std::vector<int>> dates;
-    int n_ashes;
-    std::vector<std::vector<int>> ashes;
-    int n_continuous;
-    std::vector<std::vector<int>> continuous;
-};
-
 namespace boost {
     namespace serialization {
 
@@ -74,7 +61,7 @@ namespace boost {
 
 std::vector<Horizon> read_csv_data(const std::string& file_path, std::string& header_line);
 void save_to_csv(const std::vector<Horizon>& horizons, const std::string& file_path, const std::string& header_line);
-PenaltyParameters initialize_penalty_parameters();
+//PenaltyParameters initialize_penalty_parameters();
 std::vector<Horizon> init_horizons(std::vector<Horizon>& horizons);
 Chromosome init_chromosome(const std::vector<Horizon>& d3);
 int calculate_penalty(const std::vector<Horizon>& horizons, int n_biostrat);
@@ -110,6 +97,7 @@ int main(int argc, char* argv[]) {
 
     // 从csv文件读取数据
     const std::string file_path = "./dataset/HA_Fan_et_al_2013.csv";
+    //const std::string file_path = "18988_GA_output_20230905_142250.csv";
     std::string header_line;
     std::vector<Horizon> horizons = read_csv_data(file_path, header_line);
 
@@ -129,7 +117,6 @@ int main(int argc, char* argv[]) {
     // 设置消息标识
     const int MSG_REQUEST_BEST_SOLUTION = 13;
     const int MSG_SEND_BEST_SOLUTION = 14;
-
     std::vector<Chromosome> best_solutions(library_size); // 创建最优解库
     if (rank == 0) { // 主进程（负责维护最优解库）
         MPI_Status status;
@@ -362,40 +349,6 @@ void save_to_csv(const std::vector<Horizon>& horizons, const std::string& file_p
     std::cout << "Results saved to: " << file_path << std::endl;
 }
 
-PenaltyParameters initialize_penalty_parameters() {
-    PenaltyParameters params;
-
-    //params.n_biostrat = 62;
-    params.n_biostrat = 146;
-    for (int i = 1; i <= 62; ++i) {
-        params.biostrat_columns.push_back(i);
-    }
-
-    params.n_pmag = 0;
-    params.pmag = 63;
-
-    params.n_dates = 0;
-    params.dates = {
-        {109, 2, 110, 1, 100},
-        {111, 2, 112, 1, 100},
-        {113, 2, 114, 1, 100}
-    };
-
-    params.n_ashes = 0;
-    params.ashes = {
-        {68, 100},
-        {69, 100}
-    };
-
-    params.n_continuous = 0;
-    params.continuous = {
-        {70, 5},
-        {71, 5}
-    };
-
-    return params;
-}
-
 std::vector<Horizon> init_horizons(std::vector<Horizon>& horizons) {
     return horizons;
 }
@@ -421,6 +374,7 @@ Chromosome init_chromosome(const std::vector<Horizon>& d3) {
             last_score = chromosome.horizons[j].horizon_score;
         }
     }
+
     // 根据horizon_score进行排序
     std::sort(chromosome.horizons.begin(), chromosome.horizons.end(), [](const Horizon& a, const Horizon& b) { return a.horizon_score < b.horizon_score; });
     // 计算最大和最小horizon_score
@@ -433,8 +387,10 @@ Chromosome init_chromosome(const std::vector<Horizon>& d3) {
     for (int i = 0; i < chromosome.horizons.size(); i++) {
         chromosome.horizons[i].horizon_score = i / double(chromosome.horizons.size());
     }
+
     // 计算更新后解的penalty
     chromosome.fitness = calculate_fitness(chromosome.horizons, chromosome.horizons[0].presence_absence_data.size());
+
     return chromosome;
 }
 
@@ -456,7 +412,6 @@ int calculate_penalty(const std::vector<Horizon>& horizons, int n_biostrat) {
                 last_one_index = row;
             }
         }
-
         for (int row = first_one_index; row <= last_one_index; ++row) {
             if (horizons[row].presence_absence_data[column] == 0) {
                 ++penalty;
