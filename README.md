@@ -1,5 +1,5 @@
-# PHG
-Parallel Horizon Gene
+# HORSE
+HORizon SEquenceing
 # 配置方法：
 ## 一、配置MPI框架
 1.  http://www.mpich.org/downloads/
